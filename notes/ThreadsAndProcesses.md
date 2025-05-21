@@ -42,20 +42,24 @@ A key rule of thumb in multithreading is to use as few threads as possible. If a
 
 ```mermaid
 flowchart TD
-    NEW[NEW (Created)<br>Thread t = new Thread()] -->|start()| RUNNABLE
-    RUNNABLE -->|Picked by scheduler| RUNNING
+    NEW["NEW"]
+    RUNNABLE["RUNNABLE"]
+    RUNNING["RUNNING"]
+    BLOCKED["BLOCKED"]
+    WAITING["WAITING"]
+    TIMED_WAITING["TIMED_WAITING"]
+    TERMINATED["TERMINATED"]
 
-    RUNNING -->|sleep(ms), join(ms), wait(ms)| TIMED_WAITING[TIMED_WAITING]
-    RUNNING -->|wait(), join()| WAITING[WAITING]
-    RUNNING -->|Waiting for lock| BLOCKED[BLOCKED]
+    NEW -->|start| RUNNABLE
+    RUNNABLE -->|scheduled| RUNNING
+    RUNNING -->|sleep, join, wait| TIMED_WAITING
+    RUNNING -->|wait, join| WAITING
+    RUNNING -->|lock contention| BLOCKED
+    TIMED_WAITING -->|timeout| RUNNABLE
+    WAITING -->|notify/notifyAll| RUNNABLE
+    BLOCKED -->|lock acquired| RUNNABLE
+    RUNNING -->|run completes or error| TERMINATED
 
-    TIMED_WAITING -->|Timeout ends| RUNNABLE
-    WAITING -->|notify()/notifyAll()| RUNNABLE
-    BLOCKED -->|Lock acquired| RUNNABLE
-
-    RUNNING -->|run() ends<br>or exception| TERMINATED
-
-    classDef state fill:#f9f9f9,stroke:#333,stroke-width:1px;
-    class NEW,RUNNABLE,RUNNING,WAITING,TIMED_WAITING,BLOCKED,TERMINATED state;
 ```
+
 
