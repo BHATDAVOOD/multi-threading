@@ -51,7 +51,7 @@ flowchart TD
     TERMINATED["TERMINATED"]
 
     NEW -->|start| RUNNABLE
-    RUNNABLE -->|scheduled| RUNNING
+    RUNNABLE -->|run| RUNNING
     RUNNING -->|sleep, join, wait| TIMED_WAITING
     RUNNING -->|wait, join| WAITING
     RUNNING -->|lock contention| BLOCKED
